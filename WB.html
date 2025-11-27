@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Galerie Wildberries</title>
+  <style>
+    /* Style pour les onglets actifs */
+    #tab-navigation button.active-tab {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: bold;
+    }
+    
+    #tab-navigation button {
+      transition: all 0.2s ease;
+    }
+    
+    /* ===== RÉINITIALISATION ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ===== VARIABLES ===== */
+    :root {
+      --primary-color: #007bff;
+      --primary-hover: #0056b3;
+      --success-color: #28a745;
+      --success-hover: #218838;
+      --dark-bg: #1a1a1a;
+      --light-bg: #f0f2f5;
+      --dark-container-bg: #2d2d2d;
+      --light-container-bg: #f8f9fa;
+      --text-dark: #333;
+      --text-light: #ddd;
+      --border-radius: 4px;
+      --transition: all 0.3s ease;
+    }
+    /* ===== STRUCTURE DE BASE ===== */
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: var(--light-bg);
+      padding: 20px;
+      color: var(--text-dark);
+      line-height: 1.6;
+      transition: var(--transition);
+    }
+
+    body.dark-mode {
+      background: var(--dark-bg);
+      color: var(--text-light);
+    }
+    /* ===== FORMULAIRES ET BOUTONS ===== */
+    label, input, button {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+
+    input, button {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      transition: var(--transition), transform 0.2s ease;
+    }
+
+    input:focus, button:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    button {
+      background-color: var(--primary-color);
+      color: #fff;
+      cursor: pointer;
+      border: none;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    /* ===== BOUTONS SPÉCIFIQUES ===== */
+    #darkModeToggle {
+      background-color: #444;
+      color: #eee;
+      padding: 6px 12px;
+      font-weight: bold;
+      transition: var(--transition);
+    }
+
+    #darkModeToggle:hover {
+      background-color: #666;
+    }
+
+    body.dark-mode #darkModeToggle {
+      background-color: #eee;
+      color: #121212;
+    }
+    /* ===== GRILLES ===== */
+    #gallery, #favorites {
+      margin: 0 20px 0 0;
+      padding: 0 5px;
+      display: grid;
+      gap: 5px;
+      background: transparent;
+      width: calc(100% - 20px);
+    }
+    /* ===== BARRE D'ÉTAT ===== */
+    #status-bar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      height: 28px;
+      margin: 10px 0;
+    }
+    /* ===== GALLERIE D'IMAGES ===== */
+    .img-container {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+
+    .img-container:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .img-container {
+      position: relative;
+    }
+    
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: var(--border-radius);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .img-container:hover::after {
+      content: attr(data-id);
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 3px 6px;
+      border-radius: 3px;
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .img-container img:hover {
+      transform: scale(1.03);
+    }
+
+    /* Style du bouton favori */
+    .favorite-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      z-index: 10;
+      opacity: 0.8;
+      transition: var(--transition);
+      font-size: 12px;
+    }
+    
+    .favorite-button:hover {
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+    /* ===== CONTROLES ===== */
+    .controls {
+      margin-bottom: 15px;
+      padding: 10px;
+      background: transparent;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+    }
+    /* ===== NAVIGATION ===== */
+    .shift-buttons {
+      display: flex;
+      margin: 10px 0;
+    }
+    #tab-navigation {
+      margin: 20px 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    #tab-navigation button {
+      font-size: 16px;
+      padding: 8px 14px;
+      background-color: #6c757d;
+      color: #fff;
+    }
+
+    #tab-navigation button:hover {
+      background-color: #5a6268;
+    }
+    /* ===== ÉTAT DES HÔTES ===== */
+    #host-status {
+      font-style: italic;
+      margin: 10px 0;
+      font-size: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .valid-host {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .invalid-host {
+      color: #6c757d;
+    }
+    /* ===== FAVORIS ===== */
+    #favorites-container {
+      background: transparent;
+      padding: 20px 0;
+      border: none;
+    }
+
+    /* ===== RÉACTIVITÉ ===== */
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      #host-status {
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <!-- En-tête -->
+  <div style="display: flex; align-items: center; gap: 20px;">
+    <h2>Galerie Wildberries</h2>
+    <span style="font-size: 0.75em; font-style: italic;">by Flufy74</span>
+    <div id="host-status"></div>
+  </div>
+
+  <!-- Contrôles Haut -->
+  <div class="controls" id="top-controls">
+    <label for="start">Start :</label>
+    <input type="number" id="start" name="start" value="71670500" step="1" />
+    <label for="range">Range :</label>
+    <input type="number" id="range" name="range" value="180" step="1" />
+    <!-- Contrôle du nombre de colonnes -->
+    <div class="slider-container">
+      <label for="colCount">Nb columns :</label>
+      <input type="number" id="colCount" name="colCount" value="15" min="1" max="50"
+             oninput="updateGalleryColumns()" />
+    </div>
+    <button onclick="prevRange()">Previous</button>
+    <button onclick="loadImages()">Reload</button>
+    <button onclick="nextRange()">Next</button>
+    <button id="darkModeToggle" onclick="toggleDarkMode()">Light mode</button>
+    <!-- Bouton pour basculer entre full size et medium size -->
+    <button id="switchSizeButton" onclick="toggleImageQuality()">Load HD</button>
+    <button onclick="pasteAndSetStart()">Paste from clipboard</button>
+    <button onclick="randomizeStart()">Random</button>
+  </div>
+
+  <!-- Zone regroupant boutons de décalage, compteur et onglets Galerie / Favoris -->
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-bottom: 10px;">
+    <div class="shift-buttons">
+      <button onclick="adjustStart(-10000)">-10000</button>
+      <button onclick="adjustStart(-1000)">-1000</button>
+      <button onclick="adjustStart(-100)">-100</button>
+      <button onclick="adjustStart(-10)">-10</button>
+      <button onclick="adjustStart(10)">+10</button>
+      <button onclick="adjustStart(100)">+100</button>
+      <button onclick="adjustStart(1000)">+1000</button>
+      <button onclick="adjustStart(10000)">+10000</button>
+    </div>
+    <div id="status-bar" style="display: flex; align-items: center; gap: 20px; height: 28px;">
+      <div id="imageCounters">Loaded: 0</div>
+      <div id="tab-navigation">
+        <button type="button" id="showGallery" onclick="showGalleryTab()">Gallery</button>
+        <button type="button" id="showFinder" onclick="showFinderTab()">Finder</button>
+        <button type="button" id="showFavorites" onclick="showFavoritesTab()">Favorites</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conteneur de la Galerie -->
+  <div id="gallery-container">
+    <div id="gallery"></div>
+  </div>
+
+  <!-- Conteneur du Finder -->
+  <div id="finder-container" style="display:none;">
+    <h3>Finder</h3>
+    <div class="controls" style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px;">
+      <div style="display: flex; gap: 10px; align-items: flex-start;">
+        <div style="flex-grow: 1; position: relative;">
+          <textarea 
+            id="finderSearch" 
+            placeholder="Collez vos URLs ou IDs ici (un par ligne)" 
+            style="
+            width: 570px;
+            min-width: 500px;
+            max-width: 1400px;
+            height: 150px;
+            min-height: 80px;
+            max-height: 200px;
+            padding: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: auto;
+            box-sizing: border-box;
+            border: 1px solid rgb(204, 204, 204);
+            border-radius: 4px;
+            "
+            onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); findImages(); }"
+          ></textarea>
+          <div style="font-size: 12px; color: #666; margin-top: 2px;">Appuyez sur Entrée pour ajouter une nouvelle ligne, Ctrl+Entrée pour lancer la recherche</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 22px;">
+          <div style="display: flex; gap: 10px;">
+            <button 
+              onclick="findImages()" 
+              style="
+                padding: 8px 16px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+                height: fit-content;
+              "
+            >
+              Find
+            </button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 5px; font-size: 12px;">
+            <span>Plage:</span>
+            <input 
+              type="number" 
+              id="finderRange" 
+              min="1" 
+              max="500" 
+              value="97" 
+              style="width: 50px; padding: 2px; text-align: center;"
+              onchange="updateFinderRange(this.value)"
+            >
+            <span>images</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="finder-status-bar" style="display: flex; align-items: center; gap: 20px; height: 28px; margin: 10px 0;">
+      <div id="finderImageCounters">Images: 0</div>
+    </div>
+    
+    <div id="finder-gallery"></div>
+  </div>
+
+  <!-- Conteneur des Favoris -->
+  <div id="favorites-container" style="display:none;">
+    <h3>Favorites</h3>
+    <!-- Nouveau bouton pour trier les favoris -->
+    <button id="sortButton" onclick="toggleSortFavorites()">Sort by Id</button>
+    <button onclick="exportFavorites()">Export Favorites</button>
+    <button onclick="triggerImportFavorites()">Import Favorites</button>
+    <!-- Input pour l'import (masqué) -->
+    <input type="file" id="importFavoritesInput" name="importFavorites" style="display:none" accept=".txt" onchange="handleImportFavorites(event)">
+    <!-- Zone de filtrage -->
+    <div id="favorites-filter"></div>
+    <div id="favorites"></div>
+  </div>
+  
+  <script>
+    // Variables globales
+    let allUsedHosts = new Set();
+    let imagesLoadedCounter = 0;
+    let imagesErrorCounter = 0;
+    let failedImages = [];
+    let favoritesList = [];
+    let hostOrder = ["feedback02", "feedback01", "feedback03", "feedback04", "feedback05", "feedback06", "feedback07", "feedback08", "feedback09", "feedback10"];
+    let imageQualityMode = "ms"; // "fs" = full size, "ms" = medium size
+    let sortMode = "id";
+    let loadedImageIds = new Set();
+    
+    // Fonction pour charger les images dans le Finder
+    async function loadImagesForFinder() {
+      try {
+        // Réinitialiser les états de tracking avant le chargement
+        finderManager.cache.clear();
+        finderManager.loadedIds.clear();
+        finderManager.displayedIds.clear();
+        finderManager.currentBatchIds = new Map();
+        finderManager.pendingLoads.clear();
+        
+        // Vider la galerie avant de charger
+        const finderGallery = document.getElementById('finder-gallery');
+        if (finderGallery) {
+          finderGallery.innerHTML = '';
+        } else {
+          console.error('Élément finder-gallery non trouvé');
+          return;
+        }
+        
+        const start = parseInt(document.getElementById("finderStart").value, 10) || 0;
+        const range = parseInt(document.getElementById("finderRange").value, 10) || 97;
+        
+        // Enregistrer les IDs du batch dans l'ordre
+        const ids = [];
+        for (let i = start; i < start + range; i++) {
+          ids.push(i);
+        }
+        
+        // Trier les IDs pour s'assurer qu'ils sont dans l'ordre croissant
+        ids.sort((a, b) => a - b);
+        
+        // Stocker les IDs dans currentBatchIds
+        ids.forEach(id => {
+          finderManager.currentBatchIds.set(id, { id });
+        });
+        
+        // Fonction pour traiter le chargement par lots
+        const processBatch = async (batchIds) => {
+          const promises = batchIds.map(id => loadImageForFinder(id));
+          await Promise.allSettled(promises);
+          
+          // Afficher les images chargées dans l'ordre
+          const loadedInBatch = [];
+          for (const id of batchIds) {
+            if (finderManager.loadedIds.has(id) && !finderManager.displayedIds.has(id)) {
+              loadedInBatch.push(id);
+            }
+          }
+          
+          // Afficher les images du lot actuel dans l'ordre
+          loadedInBatch.sort((a, b) => a - b);
+          for (const id of loadedInBatch) {
+            finderManager.displayImage(id);
+          }
+          
+          updateFinderColumns();
+          finderManager.updateImageCounters();
+        };
+        
+        // Diviser le chargement en petits lots pour un meilleur rendu progressif
+        const batchSize = 20;
+        for (let i = 0; i < ids.length; i += batchSize) {
+          const batch = ids.slice(i, i + batchSize);
+          await processBatch(batch);
+        }
+        //console.log('Mise à jour des colonnes terminée.');
+        
+      } catch (error) {
+        console.error('Erreur dans loadImagesForFinder:', error);
+      }
+    }
+    
+    // Fonction utilitaire pour charger une image dans le Finder (version optimisée)
+    function loadImageForFinder(id) {
+      // Vérifier si l'ID a déjà été chargé ou est en cours de chargement
+      if (finderManager.loadedIds.has(id) || finderManager.pendingLoads.has(id)) {
+        return Promise.resolve();
+      }
+      
+      // Marquer comme en cours de chargement
+      finderManager.pendingLoads.set(id, true);
+      
+      return new Promise((resolve) => {
+        try {
+          const numericId = parseInt(id, 10);
+          const full = numericId.toString();
+          let vol, part;
+          
+          // Déterminer le format du volume et de la partie
+          if (full.length === 7) {
+            vol = full.slice(0, 2);
+            part = full.slice(0, 4);
+          } else if (full.length === 8) {
+            vol = full.slice(0, 3);
+            part = full.slice(0, 5);
+          } else if (full.length === 9) {
+            vol = full.slice(0, 4);
+            part = full.slice(0, 6);
+          } else {
+            console.error(`Format d'ID invalide: ${id} (longueur: ${full.length})`);
+            finderManager.pendingLoads.delete(id);
+            resolve();
+            return;
+          }
+          
+          const host = finderManager.getHostForId(numericId);
+          if (!host) {
+            finderManager.pendingLoads.delete(id);
+            resolve();
+            return;
+          }
+          
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.alt = `Image ${id}`;
+          
+          // Utiliser l'image moyenne (ms.webp) pour un chargement plus rapide
+          const displayUrl = `https://${host}.wbbasket.ru/vol${vol}/part${part}/${full}/photos/ms.webp`;
+          
+          img.onload = () => {
+            allUsedHosts.add(host);
+            finderManager.loadedImageIds.add(id);
+            finderManager.addImage(id, img, displayUrl.replace('/ms.webp', '/fs.webp'));
+            finderManager.loadedIds.add(id);
+            finderManager.pendingLoads.delete(id);
+            
+            // Mettre à jour le compteur
+            if (finderManager.updateImageCounters) {
+              finderManager.updateImageCounters();
+            }
+            
+            resolve();
+          };
+          
+          img.onerror = () => {
+            // En cas d'erreur, essayer avec l'URL complète
+            if (img.src.includes('/ms.webp')) {
+              img.src = displayUrl.replace('/ms.webp', '/fs.webp');
+              img.onerror = () => {
+                console.error(`Échec du chargement de l'image ${id}`);
+                finderManager.pendingLoads.delete(id);
+                resolve();
+              };
+            } else {
+              finderManager.pendingLoads.delete(id);
+              resolve();
+            }
+          };
+          
+          // Démarrer le chargement
+          img.src = displayUrl;
+          
+        } catch (error) {
+          console.error(`Erreur lors du chargement de l'image ${id}:`, error);
+          finderManager.pendingLoads.delete(id);
+          resolve();
+        }
+      });
+    }
+    
+    // Fonctions de navigation pour le Finder
+    function prevRangeFinder() {
+      const startInput = document.getElementById("finderStart");
+      const range = parseInt(document.getElementById("finderRange").value, 10);
+      let newStart = parseInt(startInput.value, 10) - range;
+      if (newStart < 0) newStart = 0;
+      startInput.value = newStart;
+      loadImagesForFinder();
+    }
+    
+    function nextRangeFinder() {
+      const startInput = document.getElementById("finderStart");
+      const range = parseInt(document.getElementById("finderRange").value, 10);
+      startInput.value = parseInt(startInput.value, 10) + range;
+      loadImagesForFinder();
+    }
+    
+    function adjustStartFinder(delta) {
+      const startInput = document.getElementById("finderStart");
+      let newStart = parseInt(startInput.value, 10) + delta;
+      if (newStart < 0) newStart = 0;
+      startInput.value = newStart;
+      loadImagesForFinder();
+    }
+    
+    function randomizeStartFinder() {
+      const min = 1000000;
+      const max = 350000000;
+      const randomStart = Math.floor(Math.random() * (max - min + 1)) + min;
+      document.getElementById("finderStart").value = randomStart;
+      loadImagesForFinder();
+    }
+    
+    async function pasteAndSetStartFinder() {
+      try {
+        const text = await navigator.clipboard.readText();
+        const match = text.match(/(\d{7,9})/);
+        if (match) {
+          const id = parseInt(match[1], 10);
+          const newStart = id - 10;
+          document.getElementById("finderStart").value = newStart;
+          loadImagesForFinder();
+        } else {
+          alert("Aucun identifiant valide trouvé dans le lien.");
+        }
+      } catch (err) {
+        alert("Erreur lors de la lecture du presse-papiers : " + err.message);
+      }
+    }
+    function updateFinderColumns() {
+      const gallery = document.getElementById('finder-gallery');
+      if (!gallery) return;
+      
+      // Utiliser la même logique que pour la galerie principale
+      const colCount = parseInt(document.getElementById("colCount").value, 10);
+      const newSize = getImageSize();
+      
+      // Mettre à jour le style de la grille
+      gallery.style.display = 'grid';
+      gallery.style.gridTemplateColumns = `repeat(${colCount}, ${newSize}px)`;
+      gallery.style.gap = '5px';
+      gallery.style.margin = '0 20px 0 0';
+      gallery.style.padding = '0 5px';
+      gallery.style.background = 'transparent';
+      gallery.style.width = 'calc(100% - 20px)';
+      gallery.style.justifyContent = 'flex-start';
+      
+      // Mettre à jour la taille de tous les conteneurs d'images
+      document.querySelectorAll("#finder-gallery .img-container").forEach(container => {
+        container.style.width = newSize + 'px';
+        container.style.height = 'auto';
+        container.style.overflow = 'hidden';
+        container.style.position = 'relative';
+        
+        // Mettre à jour la taille des images
+        const img = container.querySelector('img');
+        if (img) {
+          img.style.width = '100%';
+          img.style.height = 'auto';
+          img.style.display = 'block';
+          img.style.maxWidth = '100%';
+          
+          // Positionner le bouton favoris
+          const favButton = container.querySelector('.favorite-button');
+          if (favButton) {
+            favButton.style.position = 'absolute';
+            favButton.style.top = '5px';
+            favButton.style.right = '5px';
+            favButton.style.zIndex = '10';
+            favButton.style.background = 'rgba(0, 0, 0, 0.5)';
+            favButton.style.border = 'none';
+            favButton.style.borderRadius = '50%';
+            favButton.style.width = '24px';
+            favButton.style.height = '24px';
+            favButton.style.color = 'white';
+            favButton.style.cursor = 'pointer';
+            favButton.style.display = 'flex';
+            favButton.style.alignItems = 'center';
+            favButton.style.justifyContent = 'center';
+            favButton.style.fontSize = '14px';
+          }
+        }
+      });
+      
+      // Forcer un recalcul du style pour s'assurer que les changements sont appliqués
+      if (gallery.offsetHeight) {
+        gallery.style.display = 'grid';
+      }
+    }
+    
+    // Fonction pour créer une copie profonde d'un objet
+    function deepCopy(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+    
+    // Gestionnaire d'images pour le Finder (sera initialisé après imageManager)
+    let finderManager = {
+      cache: new Map(),
+      pendingLoads: new Map(), // Pour stocker les contrôleurs d'annulation
+      currentBatchIds: new Map(),
+      displayedIds: new Set(),
+      loadedIds: new Set(),
+      loadedImageIds: new Set(),
+      container: 'finder-gallery',
+      startInput: 'finderStart',
+      rangeInput: 'finderRange',
+      counterElement: 'finderImageCounters',
+      abortController: new AbortController(), // Contrôleur d'annulation global
+      
+      // Méthodes de base
+      clear: function() {
+        // Annuler toutes les requêtes en attente
+        for (const [id, controller] of this.pendingLoads) {
+          if (controller && !controller.signal.aborted) {
+            controller.abort();
+          }
+        }
+        
+        // Réinitialiser l'état
+        this.cache.clear();
+        this.pendingLoads.clear();
+        this.currentBatchIds.clear();
+        this.displayedIds.clear();
+        this.loadedIds.clear();
+        this.loadedImageIds.clear();
+        
+        // Créer un nouveau contrôleur d'annulation
+        if (this.abortController) {
+          this.abortController.abort();
+        }
+        this.abortController = new AbortController();
+      },
+      updateImageCounters: function() {
+        const counterElement = document.getElementById(this.counterElement);
+        if (counterElement) {
+          counterElement.textContent = `Chargées: ${this.loadedIds.size} / ${this.currentBatchIds.size}`;
+        }
+      },
+      addImage: function(id, img, fsUrl) {
+        this.cache.set(id, { img, fsUrl });
+        this.loadedIds.add(id);
+        this.loadedImageIds.add(id);
+      },
+      getHostForId: function(id) {
+        const idNum = parseInt(id);
+        if (idNum >= 1000000 && idNum <= 43199999) return 'feedback01';
+        if (idNum >= 43200000 && idNum <= 86399999) return 'feedback02';
+        if (idNum >= 86400000 && idNum <= 119999999) return 'feedback03';
+        if (idNum >= 120000000 && idNum <= 153599999) return 'feedback04';
+        if (idNum >= 153600000 && idNum <= 191999999) return 'feedback05';
+        if (idNum >= 192000000 && idNum <= 230399999) return 'feedback06';
+        if (idNum >= 230400000 && idNum <= 268799999) return 'feedback07';
+        if (idNum >= 268800000 && idNum <= 307199999) return 'feedback08';
+        if (idNum >= 307200000 && idNum <= 345599999) return 'feedback09';
+        if (idNum >= 345600000 && idNum <= 500000000) return 'feedback10';
+        return 'feedback01';
+      }
+    };
+
+    
+    /************************************
+     * Calcul de la Taille des Images
+     ************************************/
+    function getImageSize() {
+      const colCount = parseInt(document.getElementById("colCount").value, 10);
+      // Calculer la largeur disponible en tenant compte des marges et du padding
+      const gallery = document.getElementById("gallery");
+      const galleryStyle = window.getComputedStyle(gallery);
+      const paddingLeft = parseFloat(galleryStyle.paddingLeft) || 0;
+      const paddingRight = parseFloat(galleryStyle.paddingRight) || 0;
+      const marginRight = parseFloat(galleryStyle.marginRight) || 0;
+      const gap = parseFloat(galleryStyle.gap) || 0;
+      
+      // Calculer la largeur disponible en soustrayant les marges, paddings et espacement
+      const availableWidth = document.documentElement.clientWidth - marginRight - paddingLeft - paddingRight - (gap * (colCount - 1));
+      
+      // S'assurer que la largeur est toujours positive
+      return Math.max(1, Math.floor(availableWidth / colCount));
+    }
+    /************************************
+     * Gestion de la Grille de la Galerie
+     ************************************/
+    function updateGalleryColumns() {
+      const colCount = parseInt(document.getElementById("colCount").value, 10);
+      const newSize = getImageSize();
+      const gallery = document.getElementById("gallery");
+      
+      // Mettre à jour le style de la grille
+      gallery.style.gridTemplateColumns = `repeat(${colCount}, ${newSize}px)`;
+      gallery.style.gap = '5px';
+      
+      // Mettre à jour la taille de toutes les images dans la galerie
+      document.querySelectorAll("#gallery .img-container").forEach(container => {
+        container.style.width = newSize + 'px';
+        container.style.height = 'auto';
+        
+        const img = container.querySelector('img');
+        if (img) {
+          img.style.width = '100%';
+          img.style.height = 'auto';
+          img.style.maxWidth = '100%';
+          img.style.display = 'block';
+        }
+      });
+      
+      // Mettre à jour également la vue des favoris
+      updateFavoritesView();
+      
+      // Forcer un recalcul du style pour s'assurer que les changements sont appliqués
+      if (gallery.offsetHeight) {
+        gallery.style.display = 'grid';
+      }
+    }
+    /************************************
+     * Chargement des Images
+     ************************************/
+    function clearGallery() {
+      const gallery = document.getElementById("gallery");
+      gallery.innerHTML = "";
+      
+      // Réinitialiser les ensembles de tracking
+      imageManager.loadedIds.clear();
+      imageManager.displayedIds.clear();
+      imageManager.lastLoadedId = null;
+      imageManager.cache.clear();
+      imageManager.pendingLoads.clear();
+      
+      allUsedHosts.clear();
+      imagesLoadedCounter = 0;
+      imagesErrorCounter = 0;
+      failedImages = [];
+      updateImageCounters();
+    }
+    function updateImageCounters() {
+      document.getElementById("imageCounters").innerHTML =
+        `Loaded: ${imagesLoadedCounter}`;
+    }
+    // Nouveau système de gestion des images
+    const imageManager = {
+      cache: new Map(),
+      pendingLoads: new Set(),
+      currentBatchIds: new Map(),
+      loadedIds: new Set(),
+      displayedIds: new Set(),
+
+      // Ajouter une image au cache
+      addImage(id, img, fsUrl) {
+        this.cache.set(id, { img, fsUrl });
+        this.loadedIds.add(id);
+      },
+
+      // Afficher une image spécifique
+      displayImage(id) {
+        if (this.displayedIds.has(id)) return;
+        
+        const image = this.cache.get(id);
+        if (!image) {
+          console.error(`Image ${id} non trouvée dans le cache`);
+          return;
+        }
+        
+        // Obtenir la taille actuelle des images
+        const newSize = getImageSize('finderColCount');
+        
+        // Créer le conteneur de l'image
+        const container = document.createElement('div');
+        container.className = 'img-container';
+        container.style.width = newSize + 'px';
+        
+        // Créer l'image avec lazy loading
+        const img = new Image();
+        img.className = 'gallery-image';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        
+        // Utiliser directement l'image du cache
+        img.src = image.img.src || image.img;
+        img.alt = `Image ${id}`;
+        img.title = `ID: ${id}`;
+        
+        // Stocker l'URL full size dans un data-attribute
+        const fullSizeUrl = img.src.replace("/ms.webp", "/fs.webp");
+        img.dataset.fullSizeUrl = fullSizeUrl;
+        
+        // Créer le conteneur de l'image avec position relative
+        const imageWrapper = document.createElement('div');
+        imageWrapper.className = 'image-wrapper';
+        
+        // Ajouter l'image au conteneur
+        imageWrapper.appendChild(img);
+        
+        // Créer le bouton favoris
+        const favoriteButton = document.createElement('button');
+        favoriteButton.className = 'favorite-button';
+        
+        // Fonction pour mettre à jour l'apparence du bouton
+        const updateButtonState = () => {
+          const isFav = favoritesList.some(fav => fav.url === fullSizeUrl);
+          favoriteButton.textContent = isFav ? '⛔' : '⭐';
+          return isFav;
+        };
+        
+        
+        // Initialiser l'état du bouton
+        let isFavorite = updateButtonState();
+        
+        favoriteButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (isFavorite) {
+            // Supprimer des favoris
+            removeFromFavorites(fullSizeUrl);
+          } else {
+            // Ajouter aux favoris
+            addToFavorites(img.dataset.fullSizeUrl, img.alt);
+          }
+          // Mettre à jour l'état du bouton
+          isFavorite = updateButtonState();
+        });
+        
+        imageWrapper.appendChild(favoriteButton);
+        container.appendChild(imageWrapper);
+        
+        // Ajouter le conteneur à la galerie
+        const gallery = document.getElementById('gallery');
+        gallery.appendChild(container);
+        
+        // Ajouter l'ID aux images affichées
+        this.displayedIds.add(id);
+        
+        // Ajouter les événements
+        img.addEventListener('click', () => window.open(img.dataset.fullSizeUrl, '_blank'));
+      },
+
+      // Obtenir les images non affichées dans l'ordre
+      getImagesToDisplay() {
+        const images = [];
+        for (const [id, imgData] of this.currentBatchIds) {
+          if (!this.displayedIds.has(id)) {
+            images.push({ id, imgData });
+          }
+        }
+        return images;
+      },
+
+
+      // Plages d'ID connues pour chaque hôte
+      getHostForId(id) {
+        const idNum = parseInt(id);
+        if (idNum >= 1000000 && idNum <= 43199999) return 'feedback01';
+        if (idNum >= 43200000 && idNum <= 86399999) return 'feedback02';
+        if (idNum >= 86400000 && idNum <= 119999999) return 'feedback03';
+        if (idNum >= 120000000 && idNum <= 153599999) return 'feedback04';
+        if (idNum >= 153600000 && idNum <= 191999999) return 'feedback05';
+        if (idNum >= 192000000 && idNum <= 230399999) return 'feedback06';
+        if (idNum >= 230400000 && idNum <= 268799999) return 'feedback07';
+        if (idNum >= 268800000 && idNum <= 307199999) return 'feedback08';
+        if (idNum >= 307200000 && idNum <= 345599999) return 'feedback09';
+        if (idNum >= 345600000 && idNum <= 500000000) return 'feedback10';
+        
+        // Par défaut, essayer avec le premier hôte
+        return 'feedback01';
+      },
+      
+      async loadImage(id) {
+        //console.log(`Chargement de l'image ${id}...`);
+        
+        // Vérifier si l'ID a déjà été chargé
+        if (this.loadedIds.has(id)) {
+          //console.log(`Image ${id} déjà chargée`);
+          return;
+        }
+        
+        // Vérifier si l'ID est déjà en cours de chargement
+        if (this.pendingLoads.has(id)) {
+          //console.log(`Image ${id} déjà en cours de chargement`);
+          return;
+        }
+        
+        // Ajouter à pendingLoads
+        this.pendingLoads.add(id);
+        
+        try {
+          const newSize = getImageSize();
+          const full = id.toString();
+          let vol, part;
+          
+          if (full.length === 7) {
+            vol = full.slice(0, 2);
+            part = full.slice(0, 4);
+          } else if (full.length === 8) {
+            vol = full.slice(0, 3);
+            part = full.slice(0, 5);
+          } else if (full.length === 9) {
+            vol = full.slice(0, 4);
+            part = full.slice(0, 6);
+          } else {
+            console.error(`Format d'ID invalide: ${id}`);
+            return;
+          }
+          
+          // Obtenir l'hôte approprié pour cet ID
+          const host = this.getHostForId(parseInt(id));
+          const displayUrl = `https://${host}.wbbasket.ru/vol${vol}/part${part}/${full}/photos/${imageQualityMode}.webp`;
+          
+          const img = new Image();
+          img.src = displayUrl;
+          img.alt = `Image ${id}`;
+          
+          img.onload = () => {
+            //console.log(`Image ${id} chargée avec succès sur ${host}`);
+            allUsedHosts.add(host);
+            if (!loadedImageIds.has(id)) {
+              imagesLoadedCounter++;
+              loadedImageIds.add(id);
+            }
+            updateHostStatus();
+            updateImageCounters();
+            
+            // Ajouter l'image au cache
+            //console.log(`Ajout de l'image ${id} au cache`);
+            this.addImage(id, img, displayUrl);
+            
+            // Marquer comme chargée
+            this.loadedIds.add(id);
+            this.pendingLoads.delete(id);
+          };
+          
+          img.onerror = () => {
+            //console.error(`Aucune image trouvée pour l'ID ${id} sur l'hôte ${host}`);
+            img.remove();
+            
+            // Enregistrer l'échec
+            failedImages.push({ 
+              full: id.toString(), 
+              host: host, 
+              url: `ID: ${id}` 
+            });
+            
+            this.currentBatchIds.delete(id);
+            this.pendingLoads.delete(id);
+            updateImageCounters();
+          };
+        } catch (error) {
+          console.error(`Erreur lors du chargement de l'image ${id}:`, error);
+          imagesErrorCounter++;
+          failedImages.push(id);
+          updateImageCounters();
+          updateFailedImagesDropdown();
+        } finally {
+          this.pendingLoads.delete(id);
+          //console.log(`Fin du chargement pour l'image ${id}`);
+        }
+      }
+    };
+
+    // Fonction principale de chargement des images
+    async function loadImages() {
+      // Réinitialiser les états de tracking avant le chargement
+      imageManager.cache.clear();
+      imageManager.loadedIds.clear();
+      imageManager.displayedIds.clear();
+      imageManager.currentBatchIds.clear();
+      
+      // Clear la galerie avant de charger
+      clearGallery();
+      
+      const start = parseInt(document.getElementById("start").value, 10);
+      const range = parseInt(document.getElementById("range").value, 10);
+      
+      // Enregistrer les IDs du batch dans l'ordre
+      for (let i = start; i < start + range; i++) {
+        imageManager.currentBatchIds.set(i, { id: i });
+      }
+      
+      // Charger les images en parallèle
+      const imagePromises = [];
+      for (let [id] of imageManager.currentBatchIds) {
+        imagePromises.push(imageManager.loadImage(id));
+      }
+      await Promise.all(imagePromises);
+      
+      // Attendre que toutes les images soient chargées
+      await new Promise(resolve => {
+        const checkImages = () => {
+          let allLoaded = true;
+          for (let [id] of imageManager.currentBatchIds) {
+            if (!imageManager.loadedIds.has(id)) {
+              allLoaded = false;
+              break;
+            }
+          }
+          if (allLoaded) {
+            resolve();
+          } else {
+            setTimeout(checkImages, 100);
+          }
+        };
+        checkImages();
+      });
+      
+      // Afficher toutes les images dans l'ordre
+      const imagesToDisplay = imageManager.getImagesToDisplay();
+      imagesToDisplay.forEach(({ id, imgData }) => {
+        imageManager.displayImage(id);
+      });
+      
+      // Attendre que toutes les images soient affichées
+      await new Promise(resolve => {
+        const checkDisplay = () => {
+          let allDisplayed = true;
+          for (let [id] of imageManager.currentBatchIds) {
+            if (!imageManager.displayedIds.has(id)) {
+              allDisplayed = false;
+              break;
+            }
+          }
+          if (allDisplayed) {
+            resolve();
+          } else {
+            setTimeout(checkDisplay, 100);
+          }
+        };
+        checkDisplay();
+      });
+      
+      // Maintenant que tout est terminé, réinitialiser pour la prochaine action
+      imageManager.currentBatchIds.clear();
+      
+      // Mettre à jour currentScrollId pour le scroll infini
+      const displayedIds = Array.from(imageManager.displayedIds)
+        .sort((a, b) => a - b);
+      currentScrollId = displayedIds.pop() || start;
+      
+      //syncBottomWithTop();
+      updateGalleryColumns();
+      setTimeout(updateHostStatus, 1000);
+    }
+
+
+    /************************************
+     * Fonctions Boutons Précédent / Suivant
+     ************************************/
+    function prevRange() {
+      const startInput = document.getElementById("start");
+      const range = parseInt(document.getElementById("range").value, 10);
+      let newStart = parseInt(startInput.value, 10) - range;
+      if (newStart < 0) newStart = 0;
+      startInput.value = newStart;
+      
+      // Réinitialiser les états de tracking avant le chargement
+      imageManager.loadedIds.clear();
+      imageManager.displayedIds.clear();
+      imageManager.lastLoadedId = null;
+      imageManager.cache.clear();
+      imageManager.pendingLoads.clear();
+      
+      loadImages();
+    }
+    function nextRange() {
+      const startInput = document.getElementById("start");
+      const range = parseInt(document.getElementById("range").value, 10);
+      startInput.value = parseInt(startInput.value, 10) + range;
+      //syncBottomWithTop();
+      
+      // Réinitialiser les états de tracking avant le chargement
+      imageManager.loadedIds.clear();
+      imageManager.displayedIds.clear();
+      imageManager.lastLoadedId = null;
+      imageManager.cache.clear();
+      imageManager.pendingLoads.clear();
+      
+      loadImages();
+    }
+    /************************************
+     * Fonctions de Navigation
+     ************************************/
+    function adjustStart(delta) {
+      const startInput = document.getElementById("start");
+      let newStart = parseInt(startInput.value, 10) + delta;
+      if (newStart < 0) newStart = 0;
+      startInput.value = newStart;
+      
+      // Réinitialiser les états de tracking avant le chargement
+      imageManager.cache.clear();
+      imageManager.loadedIds.clear();
+      imageManager.displayedIds.clear();
+      imageManager.currentBatchIds.clear();
+      
+      // Nettoyage périodique avec gestion des ressources
+    function setupPeriodicCleanup() {
+      const cleanupInterval = setInterval(() => {
+        if (imageManager.loadedIds.size > 500) {
+          imageManager.cleanupCache();
+        }
+        
+        // Forcer le garbage collection si disponible
+        if (window.gc) {
+          window.gc();
+        }
+        
+        // Libérer la mémoire des images non affichées
+        const images = document.querySelectorAll('img[data-src]');
+        images.forEach(img => {
+          if (!isElementInViewport(img) && img.src) {
+            img.removeAttribute('src');
+          }
+        });
+        
+      }, 60000); // Toutes les minutes
+      
+      // Retourner une fonction de nettoyage
+      return () => clearInterval(cleanupInterval);
+    }
+    
+    // Vérifier si un élément est dans la vue
+    function isElementInViewport(el) {
+      if (!el) return false;
+      const rect = el.getBoundingClientRect();
+      return (
+        rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.bottom >= 0 &&
+        rect.left <= (window.innerWidth || document.documentElement.clientWidth) &&
+        rect.right >= 0
+      );
+    }
+    
+    // Démarrer le nettoyage périodique
+    const cleanupCleanup = setupPeriodicCleanup();
+    
+    // Nettoyer lors du déchargement
+    window.addEventListener('beforeunload', () => {
+      if (typeof cleanupCleanup === 'function') {
+        cleanupCleanup();
+      }
+    });
+      
+      // Charger les nouvelles images
+      loadImages();
+    }
+    function randomizeStart() {
+      const min = 1000000;
+      const max = 350000000;
+      const randomStart = Math.floor(Math.random() * (max - min + 1)) + min;
+      document.getElementById("start").value = randomStart;
+      //syncBottomWithTop();
+      loadImages();
+    }
+    async function pasteAndSetStart() {
+      try {
+        const text = await navigator.clipboard.readText();
+        const match = text.match(/(\d{7,9})/);
+        if (match) {
+          const id = parseInt(match[1], 10);
+          const newStart = id - 10;
+          document.getElementById("start").value = newStart;
+          //syncBottomWithTop();
+          loadImages();
+        } else {
+          alert("Aucun identifiant valide trouvé dans le lien.");
+        }
+      } catch (err) {
+        alert("Échec de lecture du presse-papier : " + err.message);
+      }
+    }
+    /************************************
+     * Gestion des Favoris
+     ************************************/
+    function loadFavoritesFromLocalStorage() {
+      const stored = localStorage.getItem("wb_favorites");
+      favoritesList = stored ? JSON.parse(stored) : [];
+    }
+    function saveFavoritesToLocalStorage() {
+      localStorage.setItem("wb_favorites", JSON.stringify(favoritesList));
+    }
+    function addToFavorites(url, alt) {
+      let idMatch = url.match(/\/(\d+)(?=\/photos\/)/); // Extraction fiable de l'ID
+      let id = idMatch ? idMatch[1] : "";
+      let addedDate = Date.now();
+      if (!favoritesList.some(item => item.url === url)) {
+        favoritesList.push({ url, alt, addedDate, id });
+        saveFavoritesToLocalStorage();
+        updateFavoritesView();
+      }
+    }
+    function removeFromFavorites(url) {
+      // Mettre à jour la liste des favoris
+      favoritesList = favoritesList.filter(item => item.url !== url);
+      saveFavoritesToLocalStorage();
+      
+      // Trouver et supprimer l'élément du DOM directement
+      const container = document.querySelector(`.img-container[data-url="${url}"]`);
+      if (container) {
+        container.remove();
+        
+        // Si c'était le dernier élément, afficher un message
+        if (favoritesList.length === 0) {
+          const favoritesDiv = document.getElementById("favorites");
+          favoritesDiv.innerHTML = "<p>Aucun favori pour le moment.</p>";
+        }
+      } else {
+        // Si l'élément n'est pas trouvé dans le DOM, recharger la vue complète (cas de secours)
+        updateFavoritesView();
+      }
+    }
+    function updateFavoritesView() {
+      const favoritesDiv = document.getElementById("favorites");
+      const colCount = parseInt(document.getElementById("colCount").value, 10);
+      const imgSize = getImageSize();
+      
+      // Copie triée en fonction du mode
+      let sortedFavorites = favoritesList.slice();
+      if (sortMode === "date") {
+        sortedFavorites.sort((a, b) => a.addedDate - b.addedDate);
+      } else if (sortMode === "id") {
+        sortedFavorites.sort((a, b) => Number(a.id) - Number(b.id));
+      }
+      
+      // Mise à jour de la grille
+      favoritesDiv.style.display = "grid";
+      favoritesDiv.style.gridTemplateColumns = `repeat(${colCount}, ${imgSize}px)`;
+      favoritesDiv.style.gap = "5px";
+      favoritesDiv.style.background = "transparent";
+      favoritesDiv.innerHTML = "";
+      
+      // Création d'une div pour le filtre des favoris
+      const filterDiv = document.getElementById("favorites-filter");
+      if (!filterDiv) {
+        const newFilterDiv = document.createElement("div");
+        newFilterDiv.id = "favorites-filter";
+        document.querySelector("#favorites-container").insertBefore(newFilterDiv, favoritesDiv);
+      }
+      
+      // Parcourir les favoris et créer les éléments
+      sortedFavorites.forEach((item) => {
+        // Créer le conteneur principal
+        const container = document.createElement("div");
+        container.className = "img-container";
+        container.dataset.url = item.url; // Ajout de l'attribut data-url pour la suppression ciblée
+        container.style.width = imgSize + "px";
+        container.style.height = "auto";
+        
+        // Créer le wrapper d'image
+        const imgWrapper = document.createElement("div");
+        imgWrapper.className = "image-wrapper";
+        
+        // Créer l'image
+        const img = document.createElement("img");
+        const fsUrl = item.url.replace("/ms.webp", "/fs.webp");
+        const msUrl = item.url.replace("/fs.webp", "/ms.webp");
+        img.src = imageQualityMode === "fs" ? fsUrl : msUrl;
+        img.alt = item.alt || "Image favoris";
+        img.loading = "lazy";
+        img.decoding = "async";
+        img.style.width = "100%";
+        img.style.height = "auto";
+        img.style.objectFit = "cover";
+        img.style.objectPosition = "center";
+        img.style.borderRadius = "var(--border-radius)";
+        img.style.transition = "transform 0.3s ease";
+        img.style.cursor = "pointer";
+        
+        // Ajouter l'effet de zoom au survol
+        img.onmouseover = () => img.style.transform = "scale(1.03)";
+        img.onmouseout = () => img.style.transform = "scale(1)";
+        
+        // Stocker l'URL full size pour le clic
+        img.dataset.fullSizeUrl = fsUrl;
+        
+        // Ouvrir l'image en grand au clic
+        img.onclick = (e) => {
+          e.stopPropagation();
+          window.open(img.dataset.fullSizeUrl, "_blank");
+        };
+        
+        // Bouton de retrait des favoris (même style que dans la galerie principale)
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "favorite-button";
+        removeBtn.title = "Retirer des favoris";
+        removeBtn.textContent = "⛔";
+        removeBtn.onclick = (e) => {
+          e.stopPropagation();
+          removeFromFavorites(item.url);
+        };
+        
+        // Assembler les éléments
+        imgWrapper.appendChild(img);
+        container.appendChild(imgWrapper);
+        container.appendChild(removeBtn);
+        favoritesDiv.appendChild(container);
+      });
+    }
+    function exportFavorites() {
+      const content = favoritesList.map(item => item.url).join("\n");
+      const blob = new Blob([content], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.download = "Favoris_WB.txt";
+      link.href = URL.createObjectURL(blob);
+      link.click();
+    }
+    function triggerImportFavorites() {
+      document.getElementById("importFavoritesInput").click();
+    }
+    function handleImportFavorites(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = e.target.result;
+        const lines = content.split(/\r?\n/).filter(line => line.trim() !== "");
+        lines.forEach(url => {
+          if (!favoritesList.some(item => item.url === url)) {
+            let idMatch = url.match(/\/(\d+)(?=\/photos\/)/);
+            let id = idMatch ? idMatch[1] : "";
+            favoritesList.push({ url: url, alt: url, addedDate: Date.now(), id });
+          }
+        });
+        saveFavoritesToLocalStorage();
+        updateFavoritesView();
+      };
+      reader.readAsText(file);
+    }
+    /************************************
+     * Autres Fonctions
+     ************************************/
+    function updateHostStatus() {
+      const hostStatus = document.getElementById("host-status");
+      hostStatus.innerHTML = "Hosts testés : ";
+      hostOrder.forEach(h => {
+        const span = document.createElement("span");
+        span.textContent = h + (allUsedHosts.has(h) ? " ✅" : " ❌");
+        span.className = allUsedHosts.has(h) ? "valid-host" : "invalid-host";
+        hostStatus.appendChild(span);
+      });
+    }
+    // Gestionnaire de ressources pour le nettoyage
+    const resourceManager = {
+      eventListeners: [],
+      intervals: [],
+      timeouts: [],
+      abortControllers: [],
+      observers: [],
+      
+      addEventListener(target, event, handler, options) {
+        target.addEventListener(event, handler, options);
+        this.eventListeners.push({ target, event, handler, options });
+      },
+      
+      setInterval(callback, delay) {
+        const id = setInterval(callback, delay);
+        this.intervals.push(id);
+        return id;
+      },
+      
+      setTimeout(callback, delay) {
+        const id = setTimeout(callback, delay);
+        this.timeouts.push(id);
+        return id;
+      },
+      
+      createAbortController() {
+        const controller = new AbortController();
+        this.abortControllers.push(controller);
+        return controller;
+      },
+      
+      observe(target, callback, options) {
+        const observer = new IntersectionObserver(callback, options);
+        observer.observe(target);
+        this.observers.push(observer);
+        return observer;
+      },
+      
+      cleanup() {
+        // Nettoyer les écouteurs d'événements
+        this.eventListeners.forEach(({ target, event, handler, options }) => {
+          target.removeEventListener(event, handler, options);
+        });
+        
+        // Nettoyer les intervalles et timeouts
+        this.intervals.forEach(clearInterval);
+        this.timeouts.forEach(clearTimeout);
+        
+        // Annuler les requêtes en cours
+        this.abortControllers.forEach(controller => controller.abort());
+        
+        // Désactiver les observateurs
+        this.observers.forEach(observer => observer.disconnect());
+        
+        // Réinitialiser les tableaux
+        this.eventListeners = [];
+        this.intervals = [];
+        this.timeouts = [];
+        this.abortControllers = [];
+        this.observers = [];
+      }
+    };
+
+    // Flag pour éviter les appels multiples
+    let isScrollLoading = false;
+
+    // Gestion du scroll infini
+    async function handleScroll() {
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const threshold = 1000;
+        const colCount = parseInt(document.getElementById("colCount").value, 10);
+        const NbrRow = 6;
+        
+        // Calculer le nombre d'images à charger (multiple de colCount)
+        let imagesToLoad = colCount * NbrRow;
+        imagesToLoad = Math.ceil(imagesToLoad / colCount) * colCount;
+    
+        if (documentHeight - scrollTop - windowHeight < threshold && !isScrollLoading) {
+            isScrollLoading = true;
+            removeFirstRowImages();
+    
+            try {
+                const gallery = document.getElementById('gallery');
+                const lastContainer = gallery.lastElementChild;
+                const lastImage = lastContainer?.querySelector('img');
+                
+                if (lastImage) {
+                    const lastId = parseInt(lastImage.alt.split(' ')[1], 10);
+                    const startId = lastId + 1;
+    
+                    // Enregistrer les IDs du batch dans l'ordre
+                    for (let i = startId; i < startId + imagesToLoad; i++) {
+                        imageManager.currentBatchIds.set(i, { id: i });
+                    }
+                    
+                    // Charger les images en parallèle avec gestion d'erreur
+                    const imagePromises = [];
+                    const loadedIds = new Set();
+                    
+                    for (let [id] of imageManager.currentBatchIds) {
+                        const loadPromise = imageManager.loadImage(id)
+                            .then(() => {
+                                loadedIds.add(id); // Marquer comme chargé si succès
+                                return { id, success: true };
+                            })
+                            .catch(error => {
+                                console.warn(`Échec du chargement de l'image ${id}:`, error);
+                                return { id, success: false };
+                            });
+                        imagePromises.push(loadPromise);
+                    }
+                    
+                    // Attendre que toutes les tentatives de chargement soient terminées
+                    const results = await Promise.all(imagePromises);
+                    
+                    // Afficher uniquement les images qui ont réussi à charger
+                    for (const { id, success } of results) {
+                        if (success && imageManager.loadedIds.has(id)) {
+                            imageManager.displayImage(id);
+                        }
+                    }
+                    
+                    // Vérifier si on a suffisamment d'images chargées
+                    const loadedCount = results.filter(r => r.success).length;
+                    if (loadedCount < imagesToLoad) {
+                        // Si on n'a pas assez d'images, on essaie d'en charger plus
+                        const remainingToLoad = imagesToLoad - loadedCount;
+                        const nextId = startId + imagesToLoad;
+                        
+                        for (let i = nextId; i < nextId + remainingToLoad; i++) {
+                            try {
+                                await imageManager.loadImage(i);
+                                if (imageManager.loadedIds.has(i)) {
+                                    imageManager.displayImage(i);
+                                    loadedCount++;
+                                    if (loadedCount >= imagesToLoad) break;
+                                }
+                            } catch (e) {
+                                console.warn(`Échec du chargement de l'image de remplacement ${i}:`, e);
+                            }
+                        }
+                    }
+                    
+                    // Réinitialiser le batch pour le prochain scroll
+                    imageManager.currentBatchIds.clear();
+                } else {
+                    console.log('Aucune image trouvée');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement:', error);
+            } finally {
+                isScrollLoading = false;
+            }
+        }
+    }
+
+    // Configuration du gestionnaire de défilement optimisé
+    function setupScrollHandler() {
+      let scrollTimeout;
+      let lastScrollY = window.scrollY;
+      let isScrolling = false;
+      
+      const scrollHandler = () => {
+        const currentScrollY = window.scrollY;
+        
+        // Ignorer les événements de défilement inutiles
+        if (Math.abs(currentScrollY - lastScrollY) < 5) {
+          return;
+        }
+        
+        lastScrollY = currentScrollY;
+        
+        // Éviter les traitements multiples
+        if (isScrolling) return;
+        isScrolling = true;
+        
+        // Utiliser requestAnimationFrame pour le rendu fluide
+        requestAnimationFrame(() => {
+          try {
+            handleScroll();
+          } catch (error) {
+            console.error('Erreur dans le gestionnaire de défilement:', error);
+          } finally {
+            isScrolling = false;
+          }
+        });
+      };
+      
+      // Ajouter l'écouteur avec le gestionnaire de ressources
+      resourceManager.addEventListener(
+        window, 
+        'scroll', 
+        scrollHandler, 
+        { passive: true, capture: false }
+      );
+      
+      // Nettoyer lors du déchargement
+      return () => {
+        clearTimeout(scrollTimeout);
+      };
+    }
+    
+    // Initialiser le gestionnaire de défilement
+    setupScrollHandler();
+    
+    // Initialiser currentScrollId au chargement
+    window.addEventListener('load', () => {
+      currentScrollId = parseInt(document.getElementById("start").value, 10);
+    });
+
+    // Supprimer les images les plus anciennes pour maintenir les performances
+    async function removeFirstRowImages() {
+        const gallery = document.getElementById('gallery');
+        const colCount = parseInt(document.getElementById("colCount").value, 10);
+        const nbrImagesToKeep = 300; // Réduit pour de meilleures performances
+        let nbrGalleryImages = gallery.children.length;
+        
+        if (nbrGalleryImages <= nbrImagesToKeep) return {
+            removed: 0,
+            kept: nbrGalleryImages
+        };
+    
+        // Calculer le nombre d'images à supprimer (arrondi au multiple de colCount supérieur)
+        let imagesToRemoveCount = nbrGalleryImages - nbrImagesToKeep;
+        imagesToRemoveCount = Math.ceil(imagesToRemoveCount / colCount) * colCount;
+        imagesToRemoveCount = Math.min(imagesToRemoveCount, nbrGalleryImages);
+    
+        // Récupérer les images à supprimer
+        const imagesToRemove = Array.from(gallery.children).slice(0, imagesToRemoveCount);
+        
+        // Libérer les ressources
+        imagesToRemove.forEach(img => {
+            const imgId = parseInt(img.querySelector('img')?.alt.split(' ')[1], 10);
+            if (imgId) {
+                imageManager.displayedIds.delete(imgId);
+                // Ne supprimez pas de loadedIds pour permettre la réutilisation du cache
+            }
+            img.remove();
+        });
+        
+        // Forcer le garbage collection si disponible
+        if (window.gc) {
+            window.gc();
+        }
+        
+        // Mettre à jour les compteurs
+        updateImageCounters();
+        
+        return {
+            removed: imagesToRemove.length,
+            kept: nbrGalleryImages - imagesToRemove.length
+        };
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const btn = document.getElementById("darkModeToggle");
+      btn.textContent = document.body.classList.contains("dark-mode") ? "Light mode" : "Dark mode";
+    }
+    // Bascule entre full size et medium size pour l'affichage.
+    // Même en mode medium, le clic et l'ajout aux favoris utilisent la version full size.
+    function toggleImageQuality(context = 'gallery') {
+      if (imageQualityMode === "fs") {
+        imageQualityMode = "ms";
+        document.getElementById("switchSizeButton").textContent = "Load HD";
+      } else {
+        imageQualityMode = "fs";
+        document.getElementById("switchSizeButton").textContent = "Load SD";
+      }
+      loadImages();
+      updateFavoritesView();
+    }
+    // Fonction pour basculer le tri dans l'onglet Favoris
+    function toggleSortFavorites() {
+      if (sortMode === "date") {
+        sortMode = "id";
+        document.getElementById("sortButton").textContent = "Trier par Date";
+      } else {
+        sortMode = "date";
+        document.getElementById("sortButton").textContent = "Trier par Id";
+      }
+      updateFavoritesView();
+    }
+    // Mettre à jour le gestionnaire d'événements pour le changement de nombre de colonnes
+    document.getElementById('colCount').addEventListener('input', function() {
+      updateGalleryColumns();
+      updateFinderColumns(); // Mettre à jour aussi la galerie du finder
+    });
+    /************************************
+     * Initialisation et Événements
+     ************************************/
+    window.onload = () => {
+    loadFavoritesFromLocalStorage();
+    updateHostStatus();
+    updateGalleryColumns();
+    loadImages();
+  };
+    // Mettre à jour les deux galeries lors du redimensionnement
+    window.addEventListener("resize", function() {
+      updateGalleryColumns();
+      updateFinderColumns();
+    });
+    // Fonction pour afficher le conteneur Galerie
+    function showGalleryTab() {
+      document.getElementById("gallery-container").style.display = "block";
+      document.getElementById("finder-container").style.display = "none";
+      document.getElementById("favorites-container").style.display = "none";
+      document.getElementById("showGallery").classList.add('active-tab');
+      document.getElementById("showFinder").classList.remove('active-tab');
+      document.getElementById("showFavorites").classList.remove('active-tab');
+    }
+    
+    // Fonction pour afficher le conteneur Finder
+    function showFinderTab() {
+      document.getElementById("gallery-container").style.display = "none";
+      document.getElementById("finder-container").style.display = "block";
+      document.getElementById("favorites-container").style.display = "none";
+      document.getElementById("showGallery").classList.remove('active-tab');
+      document.getElementById("showFinder").classList.add('active-tab');
+      document.getElementById("showFavorites").classList.remove('active-tab');
+      
+      // Mettre à jour les colonnes avec le même nombre que la galerie
+      updateFinderColumns();
+    }
+    
+    // Fonction pour extraire l'ID d'une URL
+    function extractIdFromUrl(url) {
+      //console.log('Extraction de l\'ID depuis l\'URL:', url);
+      
+      // Essayer de trouver un ID dans l'URL (format: /volXXX/partXXXXX/XXXXXXXXX/)
+      const idMatch = url.match(/\/vol\d+\/part\d+\/(\d+)\//);
+      //console.log('Résultat de la correspondance du motif complet:', idMatch);
+      
+      if (idMatch && idMatch[1]) {
+        //console.log('ID trouvé avec le motif complet:', idMatch[1]);
+        return idMatch[1];
+      }
+      
+      // Si pas de motif trouvé, essayer de trouver une suite de 7 à 9 chiffres
+      const numberMatch = url.match(/(\d{7,9})/);
+      //console.log('Résultat de la correspondance numérique:', numberMatch);
+      
+      if (numberMatch && numberMatch[1]) {
+        //console.log('ID numérique trouvé:', numberMatch[1]);
+        return numberMatch[1];
+      }
+      
+      // Essayer de trouver n'importe quel nombre dans l'URL
+      const anyNumberMatch = url.match(/(\d+)/);
+      //console.log('Correspondance numérique quelconque:', anyNumberMatch);
+      
+      return anyNumberMatch ? anyNumberMatch[1] : null;
+    }
+
+    // Fonction pour gérer la recherche d'images
+    async function findImages() {
+      // Désactiver le bouton pour éviter les clics multiples
+      const findButton = document.querySelector('button[onclick="findImages()"]');
+      if (findButton) {
+        findButton.disabled = true;
+        findButton.textContent = 'Recherche en cours...';
+      }
+      
+      try {
+        const searchInput = document.getElementById('finderSearch').value.trim();
+        if (!searchInput) {
+          console.log('Champ de recherche vide');
+          return;
+        }
+        
+        // Annuler tous les chargements en cours
+        if (finderManager && finderManager.abortController) {
+          finderManager.abortController.abort('Nouvelle recherche démarrée');
+        }
+        
+        // Réinitialiser complètement l'état du gestionnaire d'images
+        if (finderManager) {
+          finderManager.clear();
+          finderManager.abortController = new AbortController();
+        } else {
+          console.error('finderManager non initialisé');
+          return;
+        }
+        
+        // Vider la galerie actuelle
+        const gallery = document.getElementById('finder-gallery');
+        if (gallery) {
+          gallery.innerHTML = '';
+        }
+        
+        // Réinitialiser les compteurs
+        finderManager.updateImageCounters();
+        
+        // Traiter chaque ligne séparément
+        const lines = searchInput.split('\n');
+        const ids = [];
+        
+        for (const line of lines) {
+          const trimmedLine = line.trim();
+          if (!trimmedLine) continue;
+          
+          // Essayer d'extraire un ID de l'URL ou utiliser directement si c'est un nombre
+          const id = extractIdFromUrl(trimmedLine);
+          if (id) {
+            const numId = parseInt(id, 10);
+            if (!isNaN(numId)) ids.push(numId);
+          } else if (!isNaN(trimmedLine)) {
+            const numId = parseInt(trimmedLine, 10);
+            ids.push(numId);
+          } else {
+            console.log(`Aucun ID valide trouvé dans: ${trimmedLine}`);
+          }
+        }
+        
+        if (ids.length === 0) {
+          alert("Aucun ID d'image valide trouvé. Veuillez entrer des URLs ou des IDs valides, un par ligne.");
+          return;
+        }
+        
+        // Trier les IDs par ordre croissant
+        ids.sort((a, b) => a - b);
+        
+        // Charger les images trouvées de manière asynchrone
+        await loadSpecificImages(ids);
+        
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Erreur lors de la recherche d\'images:', error);
+          alert('Une erreur est survenue lors de la recherche. Veuillez réessayer.');
+        }
+      } finally {
+        // Réactiver le bouton
+        if (findButton) {
+          findButton.disabled = false;
+          findButton.textContent = 'Find';
+        }
+      }
+    }
+    
+    // Variable pour stocker la plage actuelle
+    let currentFinderRange = 97;
+    
+    // Fonction pour mettre à jour la plage du Finder
+    function updateFinderRange(newRange) {
+      const range = parseInt(newRange, 10);
+      if (!isNaN(range) && range >= 1 && range <= 500) {
+        currentFinderRange = range;
+        // Recharger les images avec la nouvelle plage si des images sont déjà affichées
+        //const gallery = document.getElementById('finder-gallery');
+        //if (gallery && gallery.children.length > 0) {
+          //const searchInput = document.getElementById('finderSearch').value.trim();
+          //if (searchInput) {
+            //findImages();
+          //}
+        //}
+      } else {
+        // Remettre la valeur précédente si la nouvelle valeur n'est pas valide
+        document.getElementById('finderRange').value = currentFinderRange;
+      }
+    }
+    
+    // Fonction pour générer une plage d'IDs autour d'un ID central
+    function generateIdRange(centralId, range = currentFinderRange) {
+      const id = parseInt(centralId, 10);
+      const startId = Math.max(1, id - range); // Ne pas aller en dessous de 1
+      const endId = id + range;
+      
+      const rangeIds = [];
+      for (let i = startId; i <= endId; i++) {
+        rangeIds.push(i.toString());
+      }
+      return rangeIds;
+    }
+
+    // Fonction pour charger des images spécifiques avec leurs voisines (version optimisée)
+    async function loadSpecificImages(ids) {
+      // Vérifier si la recherche a été annulée avant de commencer
+      if (finderManager.abortController.signal.aborted) {
+        return;
+      }
+      
+      // Vider la galerie
+      const gallery = document.getElementById('finder-gallery');
+      if (!gallery) {
+        console.error('Élément finder-gallery introuvable');
+        return;
+      }
+      
+      // Créer un ensemble pour stocker tous les IDs uniques (pour éviter les doublons)
+      const allIds = new Set();
+      
+      // Pour chaque ID central, générer une plage d'IDs et garder trace des extrémités
+      const allRanges = [];
+      const rangeEndpoints = new Set();
+      
+      // Préparer les IDs à charger
+      ids.forEach(centralId => {
+        const rangeIds = generateIdRange(centralId);
+        allRanges.push(rangeIds);
+        if (rangeIds.length > 0) {
+          rangeEndpoints.add(rangeIds[0]);
+          rangeEndpoints.add(rangeIds[rangeIds.length - 1]);
+        }
+        rangeIds.forEach(id => allIds.add(id));
+      });
+      
+      // Trier les IDs
+      const sortedIds = Array.from(allIds).sort((a, b) => parseInt(a) - parseInt(b));
+      
+      // Préparer le batch
+      const batch = [];
+      const idToInfoMap = new Map();
+      
+      sortedIds.forEach((id, index) => {
+        const idStr = String(id);
+        const isCentralId = ids.includes(parseInt(id, 10));
+        const isRangeEndpoint = rangeEndpoints.has(idStr) && !isCentralId;
+        
+        idToInfoMap.set(idStr, { id: idStr, index, isCentralId, isRangeEndpoint });
+        batch.push(idStr);
+      });
+      
+      // Mettre à jour les compteurs
+      finderManager.currentBatchIds = new Map(Array.from(idToInfoMap).map(([id, info]) => [id, { id, index: info.index }]));
+      finderManager.updateImageCounters();
+      
+      try {
+        // Créer un tableau pour stocker les promesses de chargement
+        const loadPromises = [];
+        
+        // Charger toutes les images en parallèle mais conserver l'ordre d'affichage
+        for (const id of batch) {
+          if (finderManager.abortController.signal.aborted) break;
+          
+          // Créer une promesse pour chaque chargement d'image
+          const loadPromise = (async () => {
+            try {
+              await loadImageForFinder(id);
+              
+              if (finderManager.abortController.signal.aborted) return;
+              
+              if (finderManager.loadedImageIds.has(id)) {
+                const { isCentralId, isRangeEndpoint } = idToInfoMap.get(id);
+                let highlightType = 'normal';
+                
+                if (isCentralId) highlightType = 'central';
+                else if (isRangeEndpoint) highlightType = 'endpoint';
+                
+                // Afficher immédiatement les images au fur et à mesure qu'elles se chargent
+                // mais dans l'ordre du tableau batch
+                requestAnimationFrame(() => {
+                  finderManager.displayImage(id, highlightType);
+                  finderManager.updateImageCounters();
+                  
+                  // Mettre à jour les colonnes plus fréquemment pour un meilleur rendu visuel
+                  if (batch.indexOf(id) % 10 === 0) { // Toutes les 10 images
+                    updateFinderColumns();
+                  }
+                });
+              }
+            } catch (error) {
+              if (error.name !== 'AbortError') {
+                console.error(`Erreur lors du chargement de l'image ${id}:`, error);
+              }
+            }
+          })();
+          
+          loadPromises.push(loadPromise);
+          
+          // Permettre au navigateur de traiter les événements UI entre chaque chargement
+          if (batch.indexOf(id) % 5 === 0) {
+            await new Promise(resolve => setTimeout(resolve, 0));
+          }
+        }
+        
+        // Attendre que toutes les images soient chargées
+        await Promise.all(loadPromises);
+        
+        // Mettre à jour l'affichage une fois toutes les images chargées
+        if (!finderManager.abortController.signal.aborted) {
+          updateFinderColumns();
+        }
+        
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Erreur lors du chargement des images:', error);
+          throw error;
+        }
+      }
+    }
+    
+    // Fonction pour afficher le conteneur favoris et appliquer le filtre
+    function showFavoritesTab() {
+      document.getElementById("gallery-container").style.display = "none";
+      document.getElementById("finder-container").style.display = "none";
+      document.getElementById("favorites-container").style.display = "block";
+      document.getElementById("showGallery").classList.remove('active-tab');
+      document.getElementById("showFinder").classList.remove('active-tab');
+      document.getElementById("showFavorites").classList.add('active-tab');
+      updateFavoritesView();
+    }
+
+    // Fonction pour supprimer le row-gap
+    function removeRowGap() {
+      const gallery = document.getElementById('gallery');
+      if (gallery) {
+        gallery.style.rowGap = '0';
+        gallery.style.gridRowGap = '0';
+      }
+      
+      // Appliquer à toutes les lignes existantes
+      const rows = document.querySelectorAll('.grid-row');
+      rows.forEach(row => {
+        row.style.rowGap = '0';
+        row.style.gridRowGap = '0';
+        row.style.marginBottom = '0';
+      });
+    }
+    
+    // Initialisation améliorée avec gestion des ressources
+    document.addEventListener('DOMContentLoaded', () => {
+      //console.log('initialisation du Finder...');
+      
+      // Ne plus copier automatiquement les méthodes de imageManager vers finderManager
+    // car nous avons maintenant une implémentation complète dans finderManager
+      
+      // S'assurer que les propriétés spécifiques au Finder sont correctement initialisées
+      Object.assign(finderManager, {
+        container: 'finder-gallery',
+        startInput: 'finderStart',
+        rangeInput: 'finderRange',
+        counterElement: 'finderImageCounters',
+        loadedImageIds: new Set(),
+        displayedIds: new Set(),
+        loadedIds: new Set(),
+        cache: new Map(),
+        pendingLoads: new Map(), // Doit être une Map pour stocker les contrôleurs d'annulation
+        currentBatchIds: new Map(),
+        // S'assurer que les méthodes sont liées au bon contexte
+        addImage: finderManager.addImage || function(id, img, fsUrl) {
+          this.cache.set(id, { img, fsUrl });
+          this.loadedIds.add(id);
+        },
+        displayImage: function(id, highlightType = 'normal') {
+          if (this.displayedIds.has(id)) {
+            return; // Ne pas réafficher si déjà affichée
+          }
+          
+          const imageData = this.cache.get(id);
+          if (!imageData) {
+            console.error(`Aucune donnée trouvée pour l'image ${id}`);
+            return;
+          }
+          
+          const { img, fsUrl } = imageData;
+          
+          // Créer un conteneur pour l'image
+          const container = document.createElement('div');
+          container.className = 'img-container';
+          container.id = `img-${id}`;
+          container.dataset.id = id; // Ajoute l'ID comme attribut data pour le CSS
+          container.style.position = 'relative';
+          container.style.overflow = 'hidden';
+          container.style.borderRadius = '4px';
+          container.style.boxSizing = 'border-box';
+          
+          // Mettre en évidence l'image centrale en vert et les extrémités en rouge
+          if (highlightType === 'central') {
+            // Vert pour l'image centrale
+            container.style.border = '3px solid #52c41a';
+            container.style.boxShadow = '0 0 10px rgba(82, 196, 26, 0.5)';
+          } else if (highlightType === 'endpoint') {
+            // Rouge pour les extrémités de plage
+            container.style.border = '3px solid #ff4d4f';
+            container.style.boxShadow = '0 0 10px rgba(255, 77, 79, 0.5)';
+          }
+          
+          // Créer un wrapper pour l'image et le bouton favori
+          const imageWrapper = document.createElement('div');
+          imageWrapper.className = 'image-wrapper';
+          imageWrapper.style.position = 'relative';
+          imageWrapper.style.width = '100%';
+          imageWrapper.style.height = '100%';
+          
+          // Cloner l'image pour éviter les problèmes de référence
+          const imgClone = img.cloneNode(true);
+          imgClone.className = 'gallery-image';
+          imgClone.style.width = '100%';
+          imgClone.style.height = 'auto';
+          imgClone.style.display = 'block';
+          
+          // Définir l'URL complète (full size) dans les données de l'image
+          if (!imgClone.dataset.fullSizeUrl) {
+            imgClone.dataset.fullSizeUrl = imgClone.src.replace('/ms.webp', '/fs.webp');
+          }
+          
+          // Créer le bouton favori
+          const favoriteButton = document.createElement('button');
+          favoriteButton.className = 'favorite-button';
+          favoriteButton.style.position = 'absolute';
+          favoriteButton.style.top = '5px';
+          favoriteButton.style.right = '5px';
+          favoriteButton.style.zIndex = '10';
+          favoriteButton.style.background = 'rgba(0, 0, 0, 0.5)';
+          favoriteButton.style.border = 'none';
+          favoriteButton.style.borderRadius = '50%';
+          favoriteButton.style.width = '30px';
+          favoriteButton.style.height = '30px';
+          favoriteButton.style.color = 'white';
+          favoriteButton.style.cursor = 'pointer';
+          favoriteButton.style.display = 'flex';
+          favoriteButton.style.alignItems = 'center';
+          favoriteButton.style.justifyContent = 'center';
+          favoriteButton.style.fontSize = '16px';
+          
+          // Fonction pour mettre à jour l'état du bouton favori
+          const updateFavoriteButton = () => {
+            const isFav = favoritesList.some(fav => fav.url === imgClone.dataset.fullSizeUrl);
+            favoriteButton.textContent = isFav ? '⛔' : '⭐';
+            return isFav;
+          };
+          
+          // Initialiser l'état du bouton
+          let isFavorite = updateFavoriteButton();
+          
+          // Gestionnaire d'événement pour le bouton favori
+          favoriteButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isFavorite) {
+              removeFromFavorites(imgClone.dataset.fullSizeUrl);
+            } else {
+              addToFavorites(imgClone.dataset.fullSizeUrl, `Image ${id}`);
+            }
+            isFavorite = updateFavoriteButton();
+          });
+          
+          // Gestionnaire de clic pour ouvrir l'image en plein écran
+          imgClone.addEventListener('click', () => {
+            window.open(imgClone.dataset.fullSizeUrl, '_blank');
+          });
+          
+          // Ajouter l'image et le bouton au wrapper
+          imageWrapper.appendChild(imgClone);
+          imageWrapper.appendChild(favoriteButton);
+          
+          // Ajouter le wrapper au conteneur
+          container.appendChild(imageWrapper);
+          
+          // Ajouter le conteneur à la galerie en maintenant l'ordre
+          const gallery = document.getElementById(this.container);
+          if (gallery) {
+            // Trouver la position d'insertion pour maintenir l'ordre croissant
+            const containers = Array.from(gallery.children);
+            let insertBefore = null;
+            
+            for (let i = 0; i < containers.length; i++) {
+              const containerId = parseInt(containers[i].dataset.id);
+              if (id < containerId) {
+                insertBefore = containers[i];
+                break;
+              }
+            }
+            
+            if (insertBefore) {
+              gallery.insertBefore(container, insertBefore);
+            } else {
+              gallery.appendChild(container);
+            }
+            
+            // Marquer comme affichée
+            this.displayedIds.add(id);
+          } else {
+            console.error(`Conteneur de galerie non trouvé: ${this.container}`);
+          }
+        },
+        updateImageCounters: finderManager.updateImageCounters || function() {
+          const counterElement = document.getElementById(this.counterElement);
+          if (counterElement) {
+            counterElement.textContent = `Chargées: ${this.loadedIds.size} / ${this.currentBatchIds.size}`;
+          }
+        }
+      });
+      
+      //console.log('Initialisation du Finder terminée');
+      
+      // Nettoyage lors du déchargement de la page
+      window.addEventListener('beforeunload', () => {
+        resourceManager.cleanup();
+        // Libérer les références aux images
+        if (imageManager && typeof imageManager.cleanup === 'function') {
+          imageManager.cleanup();
+        }
+      });
+      // Optimisation des performances initiales
+      if ('connection' in navigator) {
+        // Ajuster les paramètres en fonction de la connexion
+        const connection = navigator.connection;
+        if (connection.saveData || connection.effectiveType.includes('2g')) {
+          // Réduire la qualité des images en 2G ou mode économie de données
+          document.getElementById('imageQuality').checked = false;
+          toggleImageQuality();
+        }
+      }
+      
+      removeRowGap();
+      
+      // Chargement initial optimisé
+      requestIdleCallback(() => {
+        loadImages();
+      }, { timeout: 1000 });
+      // ... autres initialisations existantes ...
+    });
+    
+    // Réappliquer après le chargement des images
+    window.addEventListener('load', () => {
+      removeRowGap();
+    });
+
+  </script>
+</body>
+</html>
